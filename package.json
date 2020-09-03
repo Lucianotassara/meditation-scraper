@@ -1,0 +1,31 @@
+{
+  "name": "meditation-scrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon --inspect index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucianotassara/meditation-scrapper.git"
+  },
+  "author": "Luciano Tassara",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucianotassara/meditation-scrapper/issues"
+  },
+  "homepage": "https://github.com/Lucianotassara/meditation-scrapper#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "node-fetch": "^2.6.0",
+    "puppeteer": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

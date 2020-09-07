@@ -178,8 +178,10 @@ async function getMeditation() {
             Array.from(document.querySelectorAll('.article-main-content > p > strong > a > span'), 
             e => e.textContent));       
 
-        meditation.cita = verse[0];                                                         // 'Juan 8.25-36'       //1 Corintios 7
-        citaDetail = verse[0].split(' ');                                                   // ['Juan','8.25-26']   //['1', 'Corintios', '7']
+        meditation.cita = verse[0];                                           // 'Juan 8.25-36'       //1 Corintios 7            //"Génesis 1.26, 27"
+        
+        citaDetail = verse[0].replace(',','-').split(' ');                                     // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
+        
     } else {
 
         citasExtra = await page.evaluate(() => 
@@ -190,7 +192,7 @@ async function getMeditation() {
 
         verse = citasExtra[1]                                                               // "Mt 5.10"
         citaDetail = verse.split(' ')
-
+                                                                                            // 
         meditation.cita = verse;                                                            // 'mT 5.10"
     }
 

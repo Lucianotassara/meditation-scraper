@@ -1,13 +1,13 @@
 const fetch = require('node-fetch');
-let apiUrl = `${process.env.EVIDA_API_PROTOCOL}://${process.env.EVIDA_API_HOST}:${process.env.EVIDA_API_PORT}`
-let url = `${process.env.RVC_API_PROTOCOL}://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/146/`;
+let evidaApiUrl = `${process.env.EVIDA_API_PROTOCOL}://${process.env.EVIDA_API_HOST}:${process.env.EVIDA_API_PORT}`
+let rvcApiUrl = `${process.env.RVC_API_PROTOCOL}://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/RVC/`;
 
 async function getRvcVerseAPI(key){
-    url += `${key}`;
+    rvcApiUrl += `${key}`;
     try {
-        const response = await fetch(url);
+        const response = await fetch(rvcApiUrl);
         const json = await response.json();
-        console.log(`Haciendo fetch a rvc-api: ${url}`)
+        console.log(`Haciendo fetch a rvc-api: ${rvcApiUrl}`)
         console.log(`rvc-api responde: ${JSON.stringify( json )}`);
         return json.scripture;
     } catch (error) {
@@ -25,7 +25,7 @@ async function jwtLogin(){
    
     const getToken = async credentials => {
         try {
-            const response = await fetch(`${apiUrl}/login`, {
+            const response = await fetch(`${evidaApiUrl}/login`, {
             method: "POST",
             body: JSON.stringify(credentials),
             headers: {
@@ -34,7 +34,7 @@ async function jwtLogin(){
                 }
             });
             const json = await response.json();
-            console.log(`Haciendo login JWT a evida-api: ${apiUrl}/login`)
+            console.log(`Haciendo login JWT a evida-api: ${evidaApiUrl}/login`)
             console.log(`evida-api responde: ${JSON.stringify( json )}`);
             
             console.log(json);
@@ -50,7 +50,7 @@ async function jwtLogin(){
 }
 
 async function apiPostMeditation(token, meditation){
-    fetch(`${apiUrl}/versiculos`,
+    fetch(`${evidaApiUrl}/versiculos`,
     {
         method: "POST",
         body: JSON.stringify(meditation),
@@ -62,7 +62,7 @@ async function apiPostMeditation(token, meditation){
     })
     .then(function(res){ return res.json(); })
     .then(function(data){ 
-        console.log(`Haciendo POST a evida-api: ${apiUrl}/versiculos`)
+        console.log(`Haciendo POST a evida-api: ${evidaApiUrl}/versiculos`)
         console.log(`evida-api responde: ${JSON.stringify( data )}`);
     })
 }

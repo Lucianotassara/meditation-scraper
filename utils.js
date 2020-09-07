@@ -1,5 +1,19 @@
 const fetch = require('node-fetch');
 let apiUrl = `${process.env.EVIDA_API_PROTOCOL}://${process.env.EVIDA_API_HOST}:${process.env.EVIDA_API_PORT}`
+let url = `${process.env.RVC_API_PROTOCOL}://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/146/`;
+
+async function getRvcVerseAPI(key){
+    url += `${key}`;
+    try {
+        const response = await fetch(url);
+        const json = await response.json();
+        console.log(`Haciendo fetch a rvc-api: ${url}`)
+        console.log(`rvc-api responde: ${JSON.stringify( json )}`);
+        return json.scripture;
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 async function jwtLogin(){
     let token;
@@ -20,6 +34,9 @@ async function jwtLogin(){
                 }
             });
             const json = await response.json();
+            console.log(`Haciendo login JWT a evida-api: ${apiUrl}/login`)
+            console.log(`evida-api responde: ${JSON.stringify( json )}`);
+            
             console.log(json);
             return json.token;
         } catch (error) {
@@ -44,9 +61,18 @@ async function apiPostMeditation(token, meditation){
         },
     })
     .then(function(res){ return res.json(); })
-    .then(function(data){ console.log(JSON.stringify( data ) ) })
+    .then(function(data){ 
+        console.log(`Haciendo POST a evida-api: ${apiUrl}/versiculos`)
+        console.log(`evida-api responde: ${JSON.stringify( data )}`);
+    })
 }
 
+function getFutureDate(){
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 2);
+    futureDate.setHours(0,0,0,0);
+    return futureDate;
+}
 
 function bookKey(longName) {
     switch (longName) {
@@ -171,7 +197,13 @@ function bookKey(longName) {
     }
 }
 
-module.exports = { bookKey, jwtLogin, apiPostMeditation}
+module.exports = { 
+    bookKey, 
+    jwtLogin, 
+    apiPostMeditation, 
+    getRvcVerseAPI,
+    getFutureDate
+ }
 
 
 

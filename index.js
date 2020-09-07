@@ -92,12 +92,10 @@ async function getMeditation() {
 /************** MAIN ********************************/
 
 async function run() {
-    
      /***** Scrape meditation */
      let meditation
      try {
-         var response = await getMeditation();
-         meditation = await response;
+        meditation = await getMeditation();
      } catch (e) {
          console.error(e)
      }
@@ -105,19 +103,17 @@ async function run() {
     /***** JWT Login */
     let token;
     try {
-      var response = await lib.jwtLogin();
-      token = await response;
+        token = await lib.jwtLogin();
     } catch (e) {
       console.error(e)
     }
 
     /***** POST Meditation to API */
     try {
-        var response = await lib.apiPostMeditation(token, meditation);
-        result = await response;
+        result = await lib.apiPostMeditation(token, meditation);
     } catch (e) {
         console.error(e)
     }
-  }
+}
   
-  run();
+run();

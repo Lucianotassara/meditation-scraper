@@ -180,8 +180,9 @@ async function getMeditation() {
 
         meditation.cita = verse[0];                                           // 'Juan 8.25-36'       //1 Corintios 7            //"Génesis 1.26, 27"
         
-        citaDetail = verse[0].replace(',','-').split(' ');                                     // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
-        
+        citaDetailA = verse[0].replace(', ','-');                                                                               //"Génesis 1.26-27"
+        citaDetail = citaDetailA.split(' ');                                 // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
+
     } else {
 
         citasExtra = await page.evaluate(() => 

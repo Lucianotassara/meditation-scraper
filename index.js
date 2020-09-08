@@ -2,7 +2,6 @@ require('dotenv').config()
 const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
 const lib = require('./utils.js');
-// const utils = require('./utils.js');
 
 async function getMeditation() {
     const browser = await puppeteer.launch(
@@ -57,7 +56,6 @@ async function getMeditation() {
         citaDetail = citaDetailA.split(' ');                                 // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
 
     } else {
-
         citasExtra = await page.evaluate(() => 
             Array.from(document.querySelectorAll('.article-main-content > p > a'), 
             e => e.textContent));

@@ -6,7 +6,7 @@ const lib = require('./utils.js');
 
 async function getMeditation() {
     const browser = await puppeteer.launch(
-        // { headless: false, defaultViewport: null }       // Uncomment this line to see the browser
+         { headless: false, defaultViewport: null }       // Uncomment this line to see the browser
         );
     const page = await browser.newPage();
     await page.goto(process.env.SCRAPE_URL);           

@@ -18,11 +18,7 @@
   },
   "homepage": "https://github.com/Lucianotassara/meditation-scrapper#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "morgan": "^1.10.0",
     "node-fetch": "^2.6.0",
     "puppeteer": "^5.2.1"
   },

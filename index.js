@@ -26,7 +26,7 @@ async function getMeditation() {
         Array.from(document.querySelectorAll('.read-main-title'), 
         e => e.textContent));
 
-    meditation.titulo = title[0];
+    meditation.titulo = title[0]; 
 
     // Reflexión HTML
     const paragraph = await page.evaluate(() => 

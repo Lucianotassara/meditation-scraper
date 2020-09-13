@@ -160,8 +160,10 @@ function bookKey(longName) {
         case 'Romanos'.toUpperCase() : return 'ROM';
         case '1° Corintios'.toUpperCase() : return '1CO';
         case '1 Corintios'.toUpperCase() : return '1CO';
+        case '1 Co'.toUpperCase() : return '1CO';
         case '2° Corintios'.toUpperCase() : return '2CO';
         case '2 Corintios'.toUpperCase() : return '2CO';
+        case '2 Co'.toUpperCase() : return '2CO';
         case 'Gálatas'.toUpperCase() : return 'GAL';
         case 'Galatas'.toUpperCase() : return 'GAL';
         case 'Efesios'.toUpperCase() : return 'EPH';

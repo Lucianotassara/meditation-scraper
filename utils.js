@@ -168,6 +168,7 @@ function bookKey(longName) {
         case 'Galatas'.toUpperCase() : return 'GAL';
         case 'Efesios'.toUpperCase() : return 'EPH';
         case 'Filipenses'.toUpperCase() : return 'PHP';
+        case 'Fil'.toUpperCase() : return 'PHP';
         case 'Colosenses'.toUpperCase() : return 'COL';
         case '1° Tesalonicenses'.toUpperCase() : return '1TH';
         case '1 Tesalonicenses'.toUpperCase() : return '1TH';

@@ -178,6 +178,10 @@ function bookKey(longName) {
         case '1 Timoteo'.toUpperCase() : return '1TI';
         case '2° Timoteo'.toUpperCase() : return '2TI';
         case '2 Timoteo'.toUpperCase() : return '2TI';
+        case '1° Ti'.toUpperCase() : return '1TI';
+        case '1 Ti'.toUpperCase() : return '1TI';
+        case '2° Ti'.toUpperCase() : return '2TI';
+        case '2 Ti'.toUpperCase() : return '2TI';
         case 'Tito'.toUpperCase() : return 'TIT';
         case 'Filemón'.toUpperCase() : return 'PHM';
         case 'Filemon'.toUpperCase() : return 'PHM';

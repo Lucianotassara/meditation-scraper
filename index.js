@@ -62,7 +62,7 @@ async function getMeditation() {
             e => e.textContent));
 
         console.log(citasExtra);                                                            //["Hch 4–5", "Mt 5.10", "Ezequiel 32-33"]
-        verse = citasExtra[1]                                                               // "Mt 5.10"
+        verse = citasExtra[0]                                                               // "Mt 5.10"
         citaDetail = verse.split(' ')
         meditation.cita = verse;                                                            // 'mT 5.10"
     }

@@ -70,7 +70,7 @@ async function getMeditation() {
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
     const html = await page.content();
     let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
-    console.log(htmlLine);
+    //console.log(htmlLine);
     await browser.close();   //Cierro chromium
     
     let key;

@@ -154,6 +154,7 @@ function bookKey(longName) {
         case 'San Lucas'.toUpperCase() : return 'LUK';
         case 'Juan'.toUpperCase() : return 'JHN';
         case 'S. Juan'.toUpperCase() : return 'JHN';
+        case 'Jn'.toUpperCase() : return 'JHN';
         case 'San Juan'.toUpperCase() : return 'JHN';
         case 'Hechos'.toUpperCase() : return 'ACT';
         case 'Hch'.toUpperCase() : return 'ACT';
@@ -192,11 +193,17 @@ function bookKey(longName) {
         case '2° Pedro'.toUpperCase() : return '2PE';
         case '2 Pedro'.toUpperCase() : return '2PE';
         case '1° Juan'.toUpperCase() : return '1JN';
+        case '1 Jn'.toUpperCase() : return '1JN';
+        case '1° Jn'.toUpperCase() : return '1JN';
         case '1 Juan'.toUpperCase() : return '1JN';
         case '2° Juan'.toUpperCase() : return '2JN';
         case '2 Juan'.toUpperCase() : return '2JN';
+        case '2 Jn'.toUpperCase() : return '2JN';
+        case '2° Jn'.toUpperCase() : return '2JN';
         case '3° Juan'.toUpperCase() : return '3JN';
         case '3 Juan'.toUpperCase() : return '3JN';
+        case '3 Jn'.toUpperCase() : return '3JN';
+        case '3° Jn'.toUpperCase() : return '3JN';
         case 'Júdas'.toUpperCase() : return 'JUD';
         case 'Judas'.toUpperCase() : return 'JUD';
         case 'Apocalipsis'.toUpperCase() : return 'REV';

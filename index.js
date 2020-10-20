@@ -128,14 +128,22 @@ async function run() {
             && meditation.texto
             && meditation.reflexion){
         
-                /***** JWT Login */
+        /***** JWT Login */
         let token;
         try {
             token = await lib.jwtLogin();
         } catch (e) {
         console.error(e)
         }
-        
+
+        if (token){
+            /***** POST Meditation to API */
+            try {
+                result = await lib.apiPostMeditation(token, meditation);
+            } catch (e) {
+                console.error(e)
+            }
+        }
     }
 }
   

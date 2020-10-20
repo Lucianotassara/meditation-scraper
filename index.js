@@ -9,7 +9,7 @@ async function getMeditation() {
         //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
     const page = await browser.newPage();
-    await page.goto(process.env.SCRAPE_URL);           
+    await page.goto(process.env.MS_SCRAPE_URL);           
     await page.waitFor('.read-main-title');
 
     let meditation = {

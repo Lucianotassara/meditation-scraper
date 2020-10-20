@@ -40,6 +40,11 @@ async function getMeditation() {
         ? hayversiculo = false 
         : hayversiculo = true;
 
+    let esCapituloCompleto
+    (paragraph[0].indexOf('.') == -1) 
+        ? esCapituloCompleto = true 
+        : esCapituloCompleto = false;
+
     paragraph.shift();  // Elimino el primer item
     paragraph.pop();    // Elimino el ultimo item
     meditation.reflexion = paragraph.join(' ');
@@ -47,7 +52,7 @@ async function getMeditation() {
     let citaDetail
     let verse
     let citasExtra
-    if(hayversiculo){
+    if(hayversiculo && !esCapituloCompleto){
         verse = await page.evaluate(() => 
             Array.from(document.querySelectorAll('.article-main-content > p > strong > a > span'), 
             e => e.textContent));       
@@ -68,9 +73,12 @@ async function getMeditation() {
     }
 
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
-    const html = await page.content();
-    let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
-    //console.log(htmlLine);
+    // const html = await page.content();
+    // let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
+    // console.log(htmlLine);
+    
+    
+    
     await browser.close();   //Cierro chromium
     
     let key;
@@ -82,6 +90,7 @@ async function getMeditation() {
     
     /***** GET rvc-api */
     meditation.texto = await lib.getRvcVerseAPI(key);
+
 
     //objeto final
     console.log(meditation);

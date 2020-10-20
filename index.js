@@ -74,7 +74,7 @@ async function getMeditation() {
         console.log('Muestro citas posibles: ' + citasExtra);
 
         let citaValida
-        for (let value of citasExtra ) {
+        for (let value of citasExtra ) {                                                        // Busco cual de las citas no es capitulo completo. Me quedo con la primera.
             (value.indexOf('.') == -1)
                 ? citasExtra.splice(value.indexOf())
                 : citaValida = value

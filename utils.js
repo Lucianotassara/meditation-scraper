@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
-let evidaApiUrl = `${process.env.EVIDA_API_PROTOCOL}://${process.env.EVIDA_API_HOST}:${process.env.EVIDA_API_PORT}`
-let rvcApiUrl = `${process.env.RVC_API_PROTOCOL}://${process.env.RVC_API_HOST}:${process.env.RVC_API_PORT}/RVC/`;
+let evidaApiUrl = `${process.env.MS_EVIDA_API_PROTOCOL}://${process.env.MS_EVIDA_API_HOST}:${process.env.MS_EVIDA_API_PORT}`
+let rvcApiUrl = `${process.env.MS_RVC_API_PROTOCOL}://${process.env.MS_RVC_API_HOST}:${process.env.MS_RVC_API_PORT}/RVC/`;
 
 async function getRvcVerseAPI(key){
     rvcApiUrl += `${key}`;
@@ -19,8 +19,8 @@ async function jwtLogin(){
     let token;
     
     let credentials = {
-        email: process.env.EVIDA_API_EMAIL,
-        password: process.env.EVIDA_API_PASSWD
+        email: process.env.MS_EVIDA_API_EMAIL,
+        password: process.env.MS_EVIDA_API_PASSWD
     }
    
     const getToken = async credentials => {

@@ -5,11 +5,11 @@ const lib = require('./utils.js');
 async function getMeditation() {
     console.log(`Comienzo scraping: ${new Date()}`);
     const browser = await puppeteer.launch(
-         {executablePath: 'chromium-browser' }           // Uncomment this line to run on ARM like a Raspberry pi.
+        {executablePath: 'chromium-browser' }           // Uncomment this line to run on ARM like a Raspberry pi.
         //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
     const page = await browser.newPage();
-    await page.goto(process.env.SCRAPE_URL);           
+    await page.goto(process.env.MS_SCRAPE_URL);           
     await page.waitFor('.read-main-title');
 
     let meditation = {
@@ -40,6 +40,11 @@ async function getMeditation() {
         ? hayversiculo = false 
         : hayversiculo = true;
 
+    let esCapituloCompleto
+    (paragraph[0].indexOf('.') == -1) 
+        ? esCapituloCompleto = true 
+        : esCapituloCompleto = false;
+
     paragraph.shift();  // Elimino el primer item
     paragraph.pop();    // Elimino el ultimo item
     meditation.reflexion = paragraph.join(' ');
@@ -47,7 +52,7 @@ async function getMeditation() {
     let citaDetail
     let verse
     let citasExtra
-    if(hayversiculo){
+    if(hayversiculo && !esCapituloCompleto){
         verse = await page.evaluate(() => 
             Array.from(document.querySelectorAll('.article-main-content > p > strong > a > span'), 
             e => e.textContent));       
@@ -61,16 +66,33 @@ async function getMeditation() {
             Array.from(document.querySelectorAll('.article-main-content > p > a'), 
             e => e.textContent));
 
-        console.log(citasExtra);                                                            //["Hch 4–5", "Mt 5.10", "Ezequiel 32-33"]
-        verse = citasExtra[0]                                                               // "Mt 5.10"
+        // console.log(citasExtra);                                                            //["Hch 4–5", "Mt 5.10", "Ezequiel 32-33"]
+        // verse = citasExtra[1]                                                               // "Mt 5.10"
+        // citaDetail = verse.split(' ')
+        // meditation.cita = verse;                                                            // 'mT 5.10"
+
+        console.log('Muestro citas posibles: ' + citasExtra);
+
+        let citaValida
+        for (let value of citasExtra ) {                                                        // Busco cual de las citas no es capitulo completo. Me quedo con la primera.
+            (value.indexOf('.') == -1)
+                ? citasExtra.splice(value.indexOf())
+                : citaValida = value
+        }
+        console.log('Muestro una cita valida: ' + citaValida);
+        verse = citaValida;
         citaDetail = verse.split(' ')
         meditation.cita = verse;                                                            // 'mT 5.10"
+
     }
 
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
-    const html = await page.content();
-    let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
-    console.log(htmlLine);
+    // const html = await page.content();
+    // let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
+    // console.log(htmlLine);
+    
+    
+    
     await browser.close();   //Cierro chromium
     
     let key;
@@ -82,6 +104,7 @@ async function getMeditation() {
     
     /***** GET rvc-api */
     meditation.texto = await lib.getRvcVerseAPI(key);
+
 
     //objeto final
     console.log(meditation);
@@ -100,19 +123,27 @@ async function run() {
          console.error(e)
      }
     
-    /***** JWT Login */
-    let token;
-    try {
-        token = await lib.jwtLogin();
-    } catch (e) {
-      console.error(e)
-    }
-
-    /***** POST Meditation to API */
-    try {
-        result = await lib.apiPostMeditation(token, meditation);
-    } catch (e) {
+    if (meditation.titulo 
+            && meditation.cita 
+            && meditation.texto
+            && meditation.reflexion){
+        
+        /***** JWT Login */
+        let token;
+        try {
+            token = await lib.jwtLogin();
+        } catch (e) {
         console.error(e)
+        }
+
+        if (token){
+            /***** POST Meditation to API */
+            try {
+                result = await lib.apiPostMeditation(token, meditation);
+            } catch (e) {
+                console.error(e)
+            }
+        }
     }
 }
   

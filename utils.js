@@ -103,8 +103,8 @@ function bookKey(longName) {
         case '1 Crónicas'.toUpperCase() : return '1CH';
         case '2° Crónicas'.toUpperCase() : return '2CH';
         case '2 Crónicas'.toUpperCase() : return '2CH';
-        case '2 Cr'.toUpperCase() : return '1CH';
-        case '2 Cr'.toUpperCase() : return '1CH';
+        case '2 Cr'.toUpperCase() : return '2CH';
+        case '2 Cr'.toUpperCase() : return '2CH';
         case '1° Cronicas'.toUpperCase() : return '1CH';
         case '1 Cronicas'.toUpperCase() : return '1CH';
         case '2° Cronicas'.toUpperCase() : return '2CH';

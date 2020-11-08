@@ -116,6 +116,7 @@ function bookKey(longName) {
         case 'Job'.toUpperCase() : return 'JOB';
         case 'Salmos'.toUpperCase() : return 'PSA';
         case 'Salmo'.toUpperCase() : return 'PSA';
+        case 'Sal'.toUpperCase() : return 'PSA';
         case 'Proverbios'.toUpperCase() : return 'PRO';
         case 'Eclesiastés'.toUpperCase() : return 'ECC';
         case 'Eclesiastes'.toUpperCase() : return 'ECC';

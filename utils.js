@@ -152,10 +152,12 @@ function bookKey(longName) {
         case 'S. Mateo'.toUpperCase() : return 'MAT';
         case 'San Mateo'.toUpperCase() : return 'MAT';
         case 'Marcos'.toUpperCase() : return 'MRK';
+        case 'Mr'.toUpperCase() : return 'MRK';
         case 'S. Marcos'.toUpperCase() : return 'MRK';
         case 'San Marcos'.toUpperCase() : return 'MRK';
         case 'Lucas'.toUpperCase() : return 'LUK';
         case 'S. Lucas'.toUpperCase() : return 'LUK';
+        case 'Lc'.toUpperCase() : return 'LUK';
         case 'San Lucas'.toUpperCase() : return 'LUK';
         case 'Juan'.toUpperCase() : return 'JHN';
         case 'S. Juan'.toUpperCase() : return 'JHN';

@@ -16,14 +16,13 @@ async function getRvcVerseAPI(key){
 }
 
 async function getLastScrapedDate(){
-    // evidaApiUrl += `/lastDateScraped`;
     try {
         const response = await fetch(evidaApiUrl + '/lastDateScraped');
         const json = await response.json();
         console.log(`Haciendo fetch a evida-api para obtener ultima fecha disponible: ${evidaApiUrl}`)
-        console.log(`evida-api responde: ${JSON.stringify( json )}`);
+        console.log(`evida-api responde con fecha: ${JSON.stringify( json.fecha )}`);
         
-        const futureDate = new Date(json.fecha + 1 );
+        const futureDate = new Date(json.fecha);
         futureDate.setHours(0,0,0,0);
         return futureDate;
 

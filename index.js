@@ -1,5 +1,6 @@
 require('dotenv').config()
 const puppeteer = require('puppeteer');
+const { getFutureDate } = require('./utils.js');
 const lib = require('./utils.js');
 
 async function getMeditation() {
@@ -18,7 +19,7 @@ async function getMeditation() {
         cita2: '',
         texto: '',
         reflexion: '',
-        fecha: lib.getFutureDate()
+        // fecha: lib.getFutureDate()
     }
 
     // Titulo
@@ -106,10 +107,16 @@ async function getMeditation() {
     meditation.texto = await lib.getRvcVerseAPI(key);
 
 
+    // Obtengo ultima fecha disponible y le sumo uno:
+    let futureDate = await lib.getLastScrapedDate();
+    meditation.fecha = futureDate
+
     //objeto final
     console.log(meditation);
     return meditation;
 }
+
+
 
 
 /************** MAIN ********************************/
@@ -119,32 +126,41 @@ async function run() {
      let meditation
      try {
         meditation = await getMeditation();
-     } catch (e) {
-         console.error(e)
-     }
-    
-    if (meditation.titulo 
+
+        if (meditation.titulo 
             && meditation.cita 
             && meditation.texto
             && meditation.reflexion){
         
-        /***** JWT Login */
-        let token;
-        try {
-            token = await lib.jwtLogin();
-        } catch (e) {
-        console.error(e)
+            /***** JWT Login */
+            let token;
+            try {
+                token = await lib.jwtLogin();
+            } catch (e) {
+            console.error(e)
+            }
+
+            if (token){
+                /***** POST Meditation to API */
+                try {
+                    result = await lib.apiPostMeditation(token, meditation); 
+                } catch (e) {
+                    console.error(e)
+                }
+            } else {
+                console.error(`Ocurrió un error al obtener el token! ${new Date()}`)
+                // No hay token, Error al obtenerlo
+            }
+        } else {
+            console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
+            //falta algún dato de la meditación
         }
 
-        if (token){
-            /***** POST Meditation to API */
-            try {
-                result = await lib.apiPostMeditation(token, meditation);
-            } catch (e) {
-                console.error(e)
-            }
-        }
+    } catch (e) {
+        console.error(e)
     }
+    
+    
 }
   
 run();

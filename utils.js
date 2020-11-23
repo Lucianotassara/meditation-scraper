@@ -23,6 +23,7 @@ async function getLastScrapedDate(){
         console.log(`evida-api responde con fecha: ${JSON.stringify( json.fecha )}`);
         
         const futureDate = new Date(json.fecha);
+        futureDate.setDate(futureDate.getDate() + 1);
         futureDate.setHours(0,0,0,0);
         return futureDate;
 

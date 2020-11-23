@@ -129,6 +129,7 @@ async function run() {
 
         if (meditation.titulo 
             && meditation.cita 
+            && meditation.fecha
             && meditation.texto
             && meditation.reflexion){
         

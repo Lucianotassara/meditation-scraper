@@ -154,6 +154,7 @@ async function run() {
             }
         } else {
             console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
+            // TODO: hacer que se guarde el html para posterior scraping
             //falta algún dato de la meditación
         }
 

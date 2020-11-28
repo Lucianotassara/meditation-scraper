@@ -1,7 +1,8 @@
 require('dotenv').config()
 const puppeteer = require('puppeteer');
-const { getFutureDate } = require('./utils.js');
-const lib = require('./utils.js');
+const utils = require('./utils/utils.js');
+const { getFutureDate } = require('./utils/utils.js');
+const lib = require('./utils/utils.js');
 
 let body;
 
@@ -92,6 +93,7 @@ async function getMeditation() {
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
     // const html = await page.content();
     this.body = await page.content();
+    this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
     // let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
     // console.log(htmlLine);
     
@@ -141,7 +143,8 @@ async function run() {
             try {
                 token = await lib.jwtLogin();
             } catch (e) {
-            console.error(e)
+                console.error(e)
+                utils.raiseError(1, meditation, this.body);
             }
 
             if (token){
@@ -150,19 +153,25 @@ async function run() {
                     result = await lib.apiPostMeditation(token, meditation); 
                 } catch (e) {
                     console.error(e)
+                    utils.raiseError(2, meditation, this.body);
                 }
             } else {
                 console.error(`Ocurrió un error al obtener el token! ${new Date()}`)
+                utils.raiseError(3, meditation, this.body);
             }
         } else {
             console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
             // TODO: hacer que se guarde el html para posterior scraping
-            let htmlLine = this.body.replace(/(\r\n|\n|\r)/gm, "");
-            console.error(htmlLine);
+            // let htmlLine = this.body.replace(/(\r\n|\n|\r)/gm, "");
+            // console.error(this.body);
+            utils.raiseError(4, meditation, this.body);
+
         }
 
     } catch (e) {
         console.error(e)
+        utils.raiseError(5, meditation, this.body);
+
     }
     
     

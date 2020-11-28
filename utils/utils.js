@@ -1,4 +1,6 @@
 const fetch = require('node-fetch');
+const mailer = require('./mailer.js');
+
 let evidaApiUrl = `${process.env.MS_EVIDA_API_PROTOCOL}://${process.env.MS_EVIDA_API_HOST}:${process.env.MS_EVIDA_API_PORT}`
 let rvcApiUrl = `${process.env.MS_RVC_API_PROTOCOL}://${process.env.MS_RVC_API_HOST}:${process.env.MS_RVC_API_PORT}/RVC/`;
 
@@ -89,6 +91,26 @@ function getFutureDate(){
     futureDate.setDate(futureDate.getDate() + 2);
     futureDate.setHours(0,0,0,0);
     return futureDate;
+}
+
+async function raiseError(errorCode, meditation, htmlBody){
+    console.error(`Error con codigo de retorno: ${errorCode}`)
+
+    let body = {
+        errorCode,
+        meditation,
+        htmlBody
+    }
+
+    
+    try {
+        let email = await mailer.armarMailError(body)
+        await mailer.enviarMail(email);
+
+    } catch (error) {
+        console.log(error);        
+    }
+
 }
 
 function bookKey(longName) {
@@ -241,7 +263,8 @@ module.exports = {
     apiPostMeditation, 
     getRvcVerseAPI,
     getFutureDate,
-    getLastScrapedDate
+    getLastScrapedDate,
+    raiseError
  }
 
 

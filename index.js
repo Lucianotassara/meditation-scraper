@@ -3,6 +3,8 @@ const puppeteer = require('puppeteer');
 const { getFutureDate } = require('./utils.js');
 const lib = require('./utils.js');
 
+let body;
+
 async function getMeditation() {
     console.log(`Comienzo scraping: ${new Date()}`);
     const browser = await puppeteer.launch(
@@ -89,6 +91,7 @@ async function getMeditation() {
 
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
     // const html = await page.content();
+    this.body = await page.content();
     // let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
     // console.log(htmlLine);
     
@@ -144,18 +147,18 @@ async function run() {
             if (token){
                 /***** POST Meditation to API */
                 try {
-                    result = await lib.apiPostMeditation(token, meditation); 
+                    // result = await lib.apiPostMeditation(token, meditation); 
                 } catch (e) {
                     console.error(e)
                 }
             } else {
                 console.error(`Ocurrió un error al obtener el token! ${new Date()}`)
-                // No hay token, Error al obtenerlo
             }
         } else {
             console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
             // TODO: hacer que se guarde el html para posterior scraping
-            //falta algún dato de la meditación
+            let htmlLine = this.body.replace(/(\r\n|\n|\r)/gm, "");
+            console.error(htmlLine);
         }
 
     } catch (e) {

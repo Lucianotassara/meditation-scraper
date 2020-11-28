@@ -147,7 +147,7 @@ async function run() {
             if (token){
                 /***** POST Meditation to API */
                 try {
-                    // result = await lib.apiPostMeditation(token, meditation); 
+                    result = await lib.apiPostMeditation(token, meditation); 
                 } catch (e) {
                     console.error(e)
                 }

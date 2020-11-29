@@ -1,7 +1,6 @@
 require('dotenv').config()
 const puppeteer = require('puppeteer');
 const utils = require('./utils/utils.js');
-const { getFutureDate } = require('./utils/utils.js');
 const lib = require('./utils/utils.js');
 
 let body;
@@ -21,8 +20,7 @@ async function getMeditation() {
         cita: '',
         cita2: '',
         texto: '',
-        reflexion: '',
-        // fecha: lib.getFutureDate()
+        reflexion: ''
     }
 
     // Titulo
@@ -91,11 +89,9 @@ async function getMeditation() {
     }
 
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
-    // const html = await page.content();
     this.body = await page.content();
     this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
-    // let htmlLine = html.replace(/(\r\n|\n|\r)/gm, "");
-    // console.log(htmlLine);
+    // console.log(this.body);
     
     
     
@@ -161,9 +157,6 @@ async function run() {
             }
         } else {
             console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
-            // TODO: hacer que se guarde el html para posterior scraping
-            // let htmlLine = this.body.replace(/(\r\n|\n|\r)/gm, "");
-            // console.error(this.body);
             utils.raiseError(4, meditation, this.body);
 
         }

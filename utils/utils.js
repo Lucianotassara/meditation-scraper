@@ -101,12 +101,10 @@ async function raiseError(errorCode, meditation, htmlBody){
         meditation,
         htmlBody
     }
-
     
     try {
         let email = await mailer.armarMailError(body)
         await mailer.enviarMail(email);
-
     } catch (error) {
         console.log(error);        
     }

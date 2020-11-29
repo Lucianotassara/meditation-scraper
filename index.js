@@ -82,7 +82,7 @@ async function getMeditation() {
                 : citaValida = value
         }
         console.log('Muestro una cita valida: ' + citaValida);
-        verse = citaValida.replace(',','');
+        verse = citaValida.replace(', ','-');
         citaDetail = verse.split(' ');
         meditation.cita = verse;                                                            // 'mT 5.10"
 

@@ -5,13 +5,12 @@ let evidaApiUrl = `${process.env.MS_EVIDA_API_PROTOCOL}://${process.env.MS_EVIDA
 let rvcApiUrl = `${process.env.MS_RVC_API_PROTOCOL}://${process.env.MS_RVC_API_HOST}:${process.env.MS_RVC_API_PORT}/RVC/`;
 
 async function getRvcVerseAPI(key){
-    rvcApiUrl += `${key}`;
     try {
-        const response = await fetch(rvcApiUrl);
+        const response = await fetch(`${rvcApiUrl}${key}`);
         const json = await response.json();
         console.log(`Haciendo fetch a rvc-api: ${rvcApiUrl}`)
         console.log(`rvc-api responde: ${JSON.stringify( json )}`);
-        return json.scripture;
+        return json;
     } catch (error) {
         console.error(error);
     }
@@ -212,6 +211,7 @@ function bookKey(longName) {
         case 'Gálatas'.toUpperCase() : return 'GAL';
         case 'Galatas'.toUpperCase() : return 'GAL';
         case 'Efesios'.toUpperCase() : return 'EPH';
+        case 'Ef'.toUpperCase() : return 'EPH';
         case 'Filipenses'.toUpperCase() : return 'PHP';
         case 'Fil'.toUpperCase() : return 'PHP';
         case 'Colosenses'.toUpperCase() : return 'COL';

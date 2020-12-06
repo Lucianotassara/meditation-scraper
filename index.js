@@ -52,8 +52,10 @@ async function getMeditation() {
     meditation.reflexion = paragraph.join(' ');
     
     let citaDetail
+    let key
     let verse
     let citasExtra
+    let citasCortas = []
     if(hayversiculo && !esCapituloCompleto){
         verse = await page.evaluate(() => 
             Array.from(document.querySelectorAll('.article-main-content > p > strong > a > span'), 
@@ -68,46 +70,64 @@ async function getMeditation() {
             Array.from(document.querySelectorAll('.article-main-content > p > a'), 
             e => e.textContent));
 
-        // console.log(citasExtra);                                                            //["Hch 4–5", "Mt 5.10", "Ezequiel 32-33"]
-        // verse = citasExtra[1]                                                               // "Mt 5.10"
-        // citaDetail = verse.split(' ')
-        // meditation.cita = verse;                                                            // 'mT 5.10"
-
         console.log('Muestro citas posibles: ' + citasExtra);
 
-        let citaValida
+        // let citaValida
+        let citasValidas = []
         for (let value of citasExtra ) {                                                        // Busco cual de las citas no es capitulo completo. Me quedo con la primera.
             (value.indexOf('.') == -1)
-                ? citasExtra.splice(value.indexOf())
-                : citaValida = value
+                ? citasExtra.splice(value.indexOf())                                            //Elimino las citas capitulo completo
+                // : citaValida = value
+                :citasValidas.push(value)                                                       //Me quedo con citas mas cortas
         }
-        console.log('Muestro una cita valida: ' + citaValida);
-        verse = citaValida.replace(', ','-');
-        citaDetail = verse.split(' ');
-        meditation.cita = verse;                                                            // 'mT 5.10"
+        
+        console.log('Muestro TODAS mis citas validas: ');// + citasValidas);
+        for (let value of citasValidas){
+            value = value.replace('. ','.');                                                    //"Génesis 1.26-27"
+            value = value.replace(', ','-');                                                    // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
+            console.log(value);
+            value = value.split(' ');
+            (isNaN(parseInt(value[0])))                                                             // devuelve false cuando es numero el primer elemento del array (caso '1 Corintios 7'
+                ? key = lib.bookKey(value[0].toUpperCase()) + '.' + value[1]                    //obtengo abreviatura del nombre del libro //'JHN.8.25-36
+                : key = lib.bookKey(value[0]+' '+value[1].toUpperCase()) + '.' + value[2]; //Compongo el nombre del libro si comienza con numero. Luego obtengo abreviatura del nombre del libro //'1CO.7
+
+            citasCortas.push(key);
+            
+        }
+
+        console.log(`muestro mis citas cortas convertidas: ${citasCortas}`);
+
+        //Recorrer todas las keys buscando en rvc-api, me quedo con la primera que responda OK.
+        for(let key of citasCortas){
+            try {
+                let versiculo
+                console.log('busco versiculo en rvc-api')
+                versiculo = await lib.getRvcVerseAPI(key);
+                if(!versiculo.error){                                                                   // Si RVC-API me responde ok, hago break y no busco el próximo versiculo
+                    // Asignar cita a meditación
+                    meditation.cita = versiculo.cita;
+                    //Asignar cita2 (key) a meditación
+                    meditation.cita2 = key;
+                    // Asignar texto a meditación
+                    meditation.texto = versiculo.scripture;
+                    break;
+                } else {
+                    console.error(`Hubo un error al querer buscar el texto: ${versiculo.error}`);
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
 
     }
 
     // Muestro el HTML por el log, para que quede guardado por si algo falla al hacer scrapping
     this.body = await page.content();
     this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
-    // console.log(this.body);
     
-    
-    
+
     await browser.close();   //Cierro chromium
     
-    let key;
-    (isNaN(parseInt(citaDetail[0])))                                                             // devuelve false cuando es numero el primer elemento del array (caso '1 Corintios 7'
-       ? key = lib.bookKey(citaDetail[0].toUpperCase()) + '.' + citaDetail[1]                    //obtengo abreviatura del nombre del libro //'JHN.8.25-36
-       : key = lib.bookKey(citaDetail[0]+' '+citaDetail[1].toUpperCase()) + '.' + citaDetail[2]; //Compongo el nombre del libro si comienza con numero. Luego obtengo abreviatura del nombre del libro //'1CO.7
-
-    meditation.cita2 = key;                                                                      //esta es mi calve para buscar en mi API de versiculos biblicos!
-    
-    /***** GET rvc-api */
-    meditation.texto = await lib.getRvcVerseAPI(key);
-
-
     // Obtengo ultima fecha disponible y le sumo uno:
     let futureDate = await lib.getLastScrapedDate();
     meditation.fecha = futureDate

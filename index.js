@@ -8,7 +8,7 @@ let body;
 async function getMeditation() {
     console.log(`Comienzo scraping: ${new Date()}`);
     const browser = await puppeteer.launch(
-        //{executablePath: 'chromium-browser' }           // Uncomment this line to run on ARM like a Raspberry pi.
+        {executablePath: 'chromium-browser' }           // Uncomment this line to run on ARM like a Raspberry pi.
         //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
     const page = await browser.newPage();

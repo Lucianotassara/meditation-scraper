@@ -12,12 +12,13 @@ async function getMeditation() {
     let browser;
 
     console.log(`AMBIENTE -----> ${process.env.ENV}`);
-    if(process.env.ENV = 'raspi'){
+    if(process.env.ENV === 'raspi'){
         browser = await puppeteer.launch(
             {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
             //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
             );
-    }else if(process.env.ENV='desa'){
+    } 
+    if(process.env.ENV==='desa'){
 
         browser = await puppeteer.launch(
             // {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.

@@ -8,7 +8,7 @@ let body;
 async function getMeditation() {
     console.log(`Comienzo scraping: ${new Date()}`);
     const browser = await puppeteer.launch(
-        {executablePath: 'chromium-browser' }           // Uncomment this line to run on ARM like a Raspberry pi.
+        {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
         //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
     const page = await browser.newPage();
@@ -98,9 +98,9 @@ async function getMeditation() {
             value = value.replace(', ','-');                                                    // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
             console.log(value);
             value = value.split(' ');
-            (isNaN(parseInt(value[0])))                                                             // devuelve false cuando es numero el primer elemento del array (caso '1 Corintios 7'
+            (isNaN(parseInt(value[0])))                                                         // devuelve false cuando es numero el primer elemento del array (caso '1 Corintios 7'
                 ? key = lib.bookKey(value[0].toUpperCase()) + '.' + value[1]                    //obtengo abreviatura del nombre del libro //'JHN.8.25-36
-                : key = lib.bookKey(value[0]+' '+value[1].toUpperCase()) + '.' + value[2]; //Compongo el nombre del libro si comienza con numero. Luego obtengo abreviatura del nombre del libro //'1CO.7
+                : key = lib.bookKey(value[0]+' '+value[1].toUpperCase()) + '.' + value[2];      //Compongo el nombre del libro si comienza con numero. Luego obtengo abreviatura del nombre del libro //'1CO.7
 
             citasCortas.push(key);
             

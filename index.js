@@ -2,15 +2,30 @@ require('dotenv').config()
 const puppeteer = require('puppeteer');
 const utils = require('./utils/utils.js');
 const lib = require('./utils/utils.js');
+const pusher = require('./utils/pushNotifier.js');
 
 let body;
 
 async function getMeditation() {
     console.log(`Comienzo scraping: ${new Date()}`);
-    const browser = await puppeteer.launch(
-        {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
-        //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
-        );
+    
+    let browser;
+
+    console.log(`AMBIENTE -----> ${process.env.ENV}`);
+    if(process.env.ENV = 'desa'){
+        browser = await puppeteer.launch(
+            //{executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
+            //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
+            );
+    }else if(process.env.ENV='raspi'){
+
+        browser = await puppeteer.launch(
+            {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
+            //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
+            );
+
+    }
+
     const page = await browser.newPage();
     await page.goto(process.env.MS_SCRAPE_URL);           
     await page.waitFor('.read-main-title');
@@ -178,6 +193,7 @@ async function run() {
                 /***** POST Meditation to API */
                 try {
                     result = await lib.apiPostMeditation(token, meditation); 
+                    pusher.sendPushNotification(meditation);
                 } catch (e) {
                     console.error(e)
                     utils.raiseError(2, meditation, this.body);

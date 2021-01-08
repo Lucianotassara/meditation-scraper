@@ -159,6 +159,9 @@ async function getMeditation() {
     let futureDate = await lib.getLastScrapedDate();
     meditation.fecha = futureDate
 
+    let planAnualLectura = await lib.buildPlanLecturesHTML(futureDate);
+    meditation.reflexion += planAnualLectura;
+
     //objeto final
     console.log(meditation);
     return meditation;

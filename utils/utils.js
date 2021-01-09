@@ -26,7 +26,7 @@ async function getLastScrapedDate(){
         
         const futureDate = new Date(json.fecha);
         futureDate.setDate(futureDate.getDate() + 1);
-        futureDate.setHours(0,0,0,0);
+        futureDate.setHours(-3,0,0,0);
         return futureDate;
 
     } catch (error) {
@@ -102,21 +102,17 @@ async function getPlanLectures(dayNumber){
 
 
 async function buildPlanLecturesHTML(futureDate){
-    //get the date of this meditation from the API
-    //let futureDate = await getLastScrapedDate();
-
     //calculate the day of the year
     let now = new Date(futureDate);
     let start = new Date(now.getFullYear(), 0, 0);
     let diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-    let oneDay = 1000 * 60 * 63 * 24; // tomo 63 para ajustar al timezone ARG (GMT-3)
+    let oneDay = 1000 * 60 * 57 * 24; // tomo 57 para ajustar al timezone ARG (GMT-3)
     let day = Math.floor(diff / oneDay); //1 to 365.
     console.log('Day of year: ' + day);
 
     //search for the date of the year within the const of bible plan
     //Foreach searching within the const for the verse of the calculated date
     let data = await getPlanLectures(day);
-
     let verseList = '';
     for (let value of data ) {
         // console.log(value);
@@ -125,7 +121,6 @@ async function buildPlanLecturesHTML(futureDate){
 
     //create HTML string to concatenate to the meditation.
     let htmlBiblePlan = `<div><br><h3>Biblia en un año:</h3><span><i>Día ${day} </i></span><ul>${verseList}</ul></div>`;
-
     console.log(htmlBiblePlan);
 
     return htmlBiblePlan;

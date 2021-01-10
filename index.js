@@ -196,7 +196,13 @@ async function run() {
             if (token){
                 /***** POST Meditation to API */
                 try {
-                    result = await lib.apiPostMeditation(token, meditation); 
+                    if(process.env.ENV === 'raspi'){
+                        result = await lib.apiPostMeditation(token, meditation); 
+                    } 
+                    if(process.env.ENV==='desa'){
+                        console.log("DESA -----> No hago post a la API porque estoy en desa")
+                        // result = await lib.apiPostMeditation(token, meditation); 
+                    }
                     pusher.sendPushNotification(meditation);
                 } catch (e) {
                     console.error(e)

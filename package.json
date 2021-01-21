@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Lucianotassara/meditation-scrapper#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "moment": "^2.29.1",
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.16",
     "puppeteer": "^5.2.1"

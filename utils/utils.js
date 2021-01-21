@@ -5,6 +5,9 @@ const BIBLE_YEAR_PLAN = require('./bibleYearPlan.js'); // { BIBLE_YEAR_PLAN } fr
 let evidaApiUrl = `${process.env.MS_EVIDA_API_PROTOCOL}://${process.env.MS_EVIDA_API_HOST}:${process.env.MS_EVIDA_API_PORT}`
 let rvcApiUrl = `${process.env.MS_RVC_API_PROTOCOL}://${process.env.MS_RVC_API_HOST}:${process.env.MS_RVC_API_PORT}/RVC/`;
 
+var moment = require('moment'); // require
+moment().format(); 
+
 async function getRvcVerseAPI(key){
     try {
         const response = await fetch(`${rvcApiUrl}${key}`);
@@ -102,25 +105,29 @@ async function getPlanLectures(dayNumber){
 
 
 async function buildPlanLecturesHTML(futureDate){
-    //calculate the day of the year
     let now = new Date(futureDate);
-    let start = new Date(now.getFullYear(), 0, 0);
-    let diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
-    let oneDay = 1000 * 60 * 57 * 24; // tomo 57 para ajustar al timezone ARG (GMT-3)
-    let day = Math.floor(diff / oneDay); //1 to 365.
-    console.log('Day of year: ' + day);
+
+    let momentDay;
+    console.log('************************************************************************************');
+    momentDay = moment(now).add(1,'days').dayOfYear(); // Number
+
+    console.log(`Day of year for next meditation using moment.js: ${momentDay}`);
+    console.log('************************************************************************************');
+
 
     //search for the date of the year within the const of bible plan
     //Foreach searching within the const for the verse of the calculated date
-    let data = await getPlanLectures(day);
+    let data = await getPlanLectures(momentDay);
+
     let verseList = '';
     for (let value of data ) {
-        // console.log(value);
+        console.log(value);
         verseList += `<li><a href="${value.url}">${value.displayVerse}</a></li>`;
+        // dayOfYear = value.dayNumber;
     }
 
     //create HTML string to concatenate to the meditation.
-    let htmlBiblePlan = `<div><br><h3>Biblia en un año:</h3><span><i>Día ${day} </i></span><ul>${verseList}</ul></div>`;
+    let htmlBiblePlan = `<div><br><h3>Biblia en un año:</h3><span><i>Día ${momentDay} </i></span><ul>${verseList}</ul></div>`;
     console.log(htmlBiblePlan);
 
     return htmlBiblePlan;
@@ -128,6 +135,11 @@ async function buildPlanLecturesHTML(futureDate){
 
 async function raiseError(errorCode, meditation, htmlBody){
     console.error(`Error con codigo de retorno: ${errorCode}`)
+    
+    if(process.env.ENV==='desa'){
+        console.log("DESA -----> No hago envio de mail error porque estoy en desa")
+        return;
+    }
 
     let body = {
         errorCode,

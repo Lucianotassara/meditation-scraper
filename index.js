@@ -22,7 +22,7 @@ function parseArguments() {
       
       argv.verse ? (overwriteVerse = true) : (overwriteVerse = false);
   
-      versParam = argv.verse.trim();
+      argv.verse ? versParam = argv.verse.trim() : "" ;
       (overwriteVerse) ? console.log("Sin parametro... debo tomar del scraping") : console.log("Recibo texto por parametro, debo sobreescribir el texto")
       console.log('muestro variable ingresada por paramentro: '+versParam);
       console.log(argv);

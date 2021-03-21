@@ -14,7 +14,7 @@ function parseArguments() {
       .option("verse", {
         alias: "v",
         description:
-          "Verse in youversion notation, to replace scraped verse",
+          "Verse in youversion notation, to replace scraped verse. \"node index.js -v JHN.3.1-17\"",
         type: "string",
       })
       .help()

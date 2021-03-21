@@ -266,14 +266,3 @@ async function run() {
 }
   
 run();
-
-
-
-
-// function test(){
-//     parseArguments();
-// }
-
-// test();
-
-

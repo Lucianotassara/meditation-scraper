@@ -44,7 +44,7 @@ async function getMeditation() {
 
         browser = await puppeteer.launch(
             // {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
-            // { headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
+            { headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
             );
 
     }

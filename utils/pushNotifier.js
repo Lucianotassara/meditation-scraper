@@ -1,4 +1,4 @@
-async function sendPushNotification(meditation){
+async function sendPushNotification(meditation, error){
     try{
         console.log(new Date()+': - Envío de notificación transmisión en vivo para video\n');
         
@@ -38,14 +38,27 @@ async function sendPushNotification(meditation){
         };
         
         // Mensaje para ambiente desarrollo
-        var messageDesa = { 
-            app_id: process.env.MS_ONESIGNAL_APP_ID,
-            headings: {"en": `SCRPD -> ${meditation.titulo}`},
-            data: {"origen": "MEDITATION_SCRAPER", "tipo": "versiculo", "idVersiculo":meditation._id},
-            contents: {"en": meditation.cita + ' - ' + meditation.texto.substring(0,400)+'... '},
-            large_icon: meditation.avatarurl,
-            template_id: process.env.MS_ONESIGNAL_TEMPLATE_ID,
-            include_player_ids: [process.env.MS_ONESIGNAL_INCLUDE_PLAYER_IDS] //Test user Moto G4 Lucho, si se usa esta linea, comentar la de "included_segments"
+        let messageDesa
+        if(error){
+            messageDesa = { 
+                app_id: process.env.MS_ONESIGNAL_APP_ID,
+                headings: {"en": `SCRPNG ERROR!!`},
+                data: {"origen": "MEDITATION_SCRAPER", "tipo": "versiculo"},
+                contents: {"en": `Se enviará un email con el error -> ${error}`},
+                large_icon: '',
+                template_id: process.env.MS_ONESIGNAL_TEMPLATE_ID,
+                include_player_ids: [process.env.MS_ONESIGNAL_INCLUDE_PLAYER_IDS] //Test user Moto G4 Lucho, si se usa esta linea, comentar la de "included_segments"
+            }
+        } else {
+            messageDesa = { 
+                app_id: process.env.MS_ONESIGNAL_APP_ID,
+                headings: {"en": `SCRPD -> ${meditation.titulo}`},
+                data: {"origen": "MEDITATION_SCRAPER", "tipo": "versiculo", "idVersiculo":meditation._id},
+                contents: {"en": meditation.cita + ' - ' + meditation.texto.substring(0,400)+'... '},
+                large_icon: meditation.avatarurl,
+                template_id: process.env.MS_ONESIGNAL_TEMPLATE_ID,
+                include_player_ids: [process.env.MS_ONESIGNAL_INCLUDE_PLAYER_IDS] //Test user Moto G4 Lucho, si se usa esta linea, comentar la de "included_segments"
+            }
         }
         
         

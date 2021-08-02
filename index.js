@@ -224,11 +224,12 @@ async function run() {
         
             /***** JWT Login */
             let token;
+            let errorMessage;
             try {
                 token = await lib.jwtLogin();
             } catch (e) {
                 console.error(e)
-                utils.raiseError(1, meditation, this.body);
+                utils.raiseError(1, meditation, this.body, e);
             }
 
             if (token){
@@ -241,24 +242,26 @@ async function run() {
                         console.log("DESA -----> No hago post a la API porque estoy en desa")
                         // result = await lib.apiPostMeditation(token, meditation); 
                     }
-                    pusher.sendPushNotification(meditation);
+                    pusher.sendPushNotification(meditation, error = false);
                 } catch (e) {
                     console.error(e)
-                    utils.raiseError(2, meditation, this.body);
+                    utils.raiseError(2, meditation, this.body, e);
                 }
             } else {
-                console.error(`Ocurrió un error al obtener el token! ${new Date()}`)
-                utils.raiseError(3, meditation, this.body);
+                errorMessage = `Ocurrió un error al obtener el token! ${new Date()}`;
+                console.error(errorMessage)
+                utils.raiseError(3, meditation, this.body, errorMessage);
             }
         } else {
-            console.error(`Falta un dato obligatorio en la meditación! ${new Date()}`)
-            utils.raiseError(4, meditation, this.body);
+            errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}`;
+            console.error(errorMessage)
+            utils.raiseError(4, meditation, this.body, errorMessage);
 
         }
 
     } catch (e) {
         console.error(e)
-        utils.raiseError(5, meditation, this.body);
+        utils.raiseError(5, meditation, this.body, e);
 
     }
     

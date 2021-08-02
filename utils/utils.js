@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const mailer = require('./mailer.js');
+const pusher = require('./pushNotifier.js');
+
 const BIBLE_YEAR_PLAN = require('./bibleYearPlan.js'); // { BIBLE_YEAR_PLAN } from './bibleYearPlan';
 
 let evidaApiUrl = `${process.env.MS_EVIDA_API_PROTOCOL}://${process.env.MS_EVIDA_API_HOST}:${process.env.MS_EVIDA_API_PORT}`
@@ -133,7 +135,7 @@ async function buildPlanLecturesHTML(futureDate){
     return htmlBiblePlan;
 }
 
-async function raiseError(errorCode, meditation, htmlBody){
+async function raiseError(errorCode, meditation, htmlBody, e){
     console.error(`Error con codigo de retorno: ${errorCode}`)
     
     if(process.env.ENV==='desa'){
@@ -153,6 +155,7 @@ async function raiseError(errorCode, meditation, htmlBody){
     } catch (error) {
         console.log(error);        
     }
+    pusher.sendPushNotification(meditation, e);
 
 }
 

@@ -7,6 +7,8 @@ const yargs = require("yargs");
 
 let versParam;
 let overwriteVerse;
+let dateParam;
+let overwriteDate;
 let body;
 
 function parseArguments() {
@@ -17,14 +19,25 @@ function parseArguments() {
           "Verse in youversion notation, to replace scraped verse. \"node index.js -v JHN.3.1-17\"",
         type: "string",
       })
+      .option("date", {
+        alias: "d",
+        description:
+          "Date on which the meditation should be posted to the API \"node index.js -d 2021-10-15\"",
+        type: "string",
+      })
       .help()
       .alias("help", "h").argv;      
       
       argv.verse ? (overwriteVerse = true) : (overwriteVerse = false);
-  
       argv.verse ? versParam = argv.verse.trim() : "" ;
-      (overwriteVerse) ? console.log("Sin parametro... debo tomar del scraping") : console.log("Recibo texto por parametro, debo sobreescribir el texto")
+      (overwriteVerse) ? console.log("Sin parametro verse.. debo tomar del scraping") : console.log("Recibo texto por parametro, debo sobreescribir el texto")
       console.log('muestro variable ingresada por paramentro: '+versParam);
+      
+      argv.date ? (overwriteDate = true) : (overwriteDate = false);
+      argv.date ? dateParam = argv.date.trim() : "" ;
+      (overwriteDate) ? console.log("Sin parametro date... debo tomar del scraping") : console.log("Recibo date por parametro, debo sobreescribir el texto")
+      console.log('muestro variable ingresada por paramentro: '+dateParam);
+
       console.log(argv);
   }
 
@@ -194,9 +207,18 @@ async function getMeditation() {
     await browser.close();   //Cierro chromium
     
     // Obtengo ultima fecha disponible y le sumo uno:
-    let futureDate = await lib.getLastScrapedDate();
-    meditation.fecha = futureDate
+    let futureDate 
+    if(!overwriteDate){
+        console.log("sorete cosmico numero 1")
+        futureDate = await lib.getLastScrapedDate();
+    } else {
+        console.log("sorete cosmico numero 2")
 
+        futureDate = new Date(dateParam)
+        
+    }
+    
+    meditation.fecha = futureDate
     let planAnualLectura = await lib.buildPlanLecturesHTML(futureDate);
     meditation.reflexion += planAnualLectura;
 

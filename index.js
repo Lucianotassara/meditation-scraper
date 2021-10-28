@@ -64,7 +64,7 @@ async function getMeditation() {
 
     const page = await browser.newPage();
     await page.goto(process.env.MS_SCRAPE_URL);           
-    await page.waitFor('.read-main-title');
+    // await page.waitFor('.read-main-title');
 
     let meditation = {
         titulo: '',
@@ -75,20 +75,23 @@ async function getMeditation() {
     }
 
     /****************************************  Titulo*/
+    //// MEDITATION TITLE TEXT
     const title = await page.evaluate(() => 
-        Array.from(document.querySelectorAll('.read-main-title'), 
+        Array.from(document.querySelectorAll('body > main > section > div > div > div > div > h1'), 
         e => e.textContent));
 
     meditation.titulo = title[0]; 
 
     /****************************************  Reflexión HTML*/
+    //// MEDITATION OUTER HTML ARRAY
     const paragraph = await page.evaluate(() => 
         
-        Array.from(document.querySelectorAll('.article-main-content > p,.article-main-content > ul,.article-main-content > ol'), 
+        Array.from(document.querySelectorAll('#js--font-sizing > article > p'), 
         e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
 
     /****************************************  Verse*/
     let hayversiculo
+        // TODO: CHECK WHENEVER THIS SITUATION COMES...
         (paragraph[0] == '<p><em>Para sacarle el máximo provecho a este devocional, lea los pasajes a los que se hacen referencia.</em></p>') 
             ? hayversiculo = false 
             : hayversiculo = true;
@@ -121,8 +124,9 @@ async function getMeditation() {
     } else {
         
         if(hayversiculo && !esCapituloCompleto){
+            //// PRIMARY VERSE REFERENCE (String)
             verse = await page.evaluate(() => 
-                Array.from(document.querySelectorAll('.article-main-content > p > strong > a > span'), 
+                Array.from(document.querySelectorAll('#js--font-sizing > article > p > a'), 
                 e => e.textContent));       
 
             meditation.cita = verse[0];                                           // 'Juan 8.25-36'       //1 Corintios 7            //"Génesis 1.26, 27"
@@ -141,10 +145,11 @@ async function getMeditation() {
             meditation.texto = texto.scripture;
 
         } else {
+            //// ALTERNATIVE VERSES ARRAY
             citasExtra = await page.evaluate(() => 
-                Array.from(document.querySelectorAll('.article-main-content > p > a'), 
+                Array.from(document.querySelectorAll('#js--font-sizing > article > p > a'), 
                 e => e.textContent));
-
+            citasExtra.shift();
             console.log('Muestro citas posibles: ' + citasExtra);
 
             // let citaValida

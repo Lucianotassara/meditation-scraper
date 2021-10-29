@@ -214,11 +214,8 @@ async function getMeditation() {
     // Obtengo ultima fecha disponible y le sumo uno:
     let futureDate 
     if(!overwriteDate){
-        console.log("sorete cosmico numero 1")
         futureDate = await lib.getLastScrapedDate();
     } else {
-        console.log("sorete cosmico numero 2")
-
         futureDate = new Date(dateParam)
         
     }

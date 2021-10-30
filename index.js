@@ -50,7 +50,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
      * @param3 overwriteVerse Boolean
      * 
      *  */
-    let completeVerse = {}
+    let completeVerse = { cita: '', cita2: '', scripture: ''}
     let hayversiculo
     // TODO: CHECK WHENEVER THIS SITUATION COMES...
     (paragraph[0] == '<p><em>Para sacarle el máximo provecho a este devocional, lea los pasajes a los que se hacen referencia.</em></p>')
@@ -87,7 +87,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
 
         /***** GET rvc-api */
         let texto = await lib.getRvcVerseAPI(key);
-        completeVerse.texto = texto.scripture;
+        completeVerse.scripture = texto.scripture;
 
     } else {
         //// ALTERNATIVE VERSES ARRAY
@@ -136,7 +136,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
                 if (!versiculo.error) {
                     completeVerse.cita = versiculo.cita;
                     completeVerse.cita2 = key;
-                    completeVerse.texto = versiculo.scripture;
+                    completeVerse.scripture = versiculo.scripture;
                     break;
                 } else {
                     console.error(`Hubo un error al querer buscar el texto: ${versiculo.error}`);
@@ -151,19 +151,18 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
 }
 
 async function scrapeInfo() {
-    let scrapedInfo = {}
     let browser;
 
     if (process.env.ENV === 'raspi') {
         browser = await puppeteer.launch(
-            { executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
+            { executablePath: 'chromium-browser' }             // Uncomment this line to run on ARM like a Raspberry pi.
             //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
     }
     if (process.env.ENV === 'desa') {
 
         browser = await puppeteer.launch(
-            // {executablePath: 'chromium-browser' }              // Uncomment this line to run on ARM like a Raspberry pi.
+            // {executablePath: 'chromium-browser' }         // Uncomment this line to run on ARM like a Raspberry pi.
             { headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
         );
 
@@ -178,14 +177,14 @@ async function scrapeInfo() {
     this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
 
     /****************************************  Titulo*/
-    //// MEDITATION TITLE TEXT
+    //// TEXT
     const title = await page.evaluate(() =>
         Array.from(document.querySelectorAll('body > main > section > div > div > div > div > h1'),
             e => e.textContent));
 
 
     /****************************************  Reflexión HTML*/
-    //// MEDITATION OUTER HTML ARRAY
+    //// HTML ARRAY
     const paragraph = await page.evaluate(() =>
         Array.from(document.querySelectorAll('#js--font-sizing > article > p'),
             e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
@@ -198,24 +197,21 @@ async function scrapeInfo() {
 
     await browser.close();   //Cierro chromium
 
-    scrapedInfo.title = title;
-    scrapedInfo.paragraph = paragraph;
-    scrapedInfo.allVerseReferences = allVerseReferences;
-
-    // return scrapedInfo;
-    return {title,
+    return {
+        title,
         paragraph,
-        allVerseReferences}
+        allVerseReferences
+    }
 }
 
 
 async function getMeditation() {
-
-    let scrapedInfo = await scrapeInfo();
-    let paragraph = scrapedInfo.paragraph;
-    let allVerseReferences = scrapedInfo.allVerseReferences;
-    let title = scrapedInfo.title;
     
+    const {
+        paragraph,
+        allVerseReferences,
+        title
+    } = await scrapeInfo();
 
     let meditation = {
         titulo: '',
@@ -231,31 +227,20 @@ async function getMeditation() {
     paragraph.pop();    // Elimino el ultimo item
     meditation.reflexion = paragraph.join(' ');
 
-    if (overwriteVerse) {
-        console.log('Getting verse from params...')
+    let verseObject;
+    (overwriteVerse)
+        ? verseObject = await lib.getRvcVerseAPI(versParam)
+        : verseObject = await handleVerse(paragraph, allVerseReferences, overwriteVerse);
 
-        let texto = await lib.getRvcVerseAPI(versParam);
-        meditation.texto = texto.scripture;
-        meditation.cita = texto.cita;
-        meditation.cita2 = versParam
-
-    } else {
-
-        let completeVerse = await handleVerse(paragraph, allVerseReferences, overwriteVerse);
-        meditation.texto = completeVerse.texto
-        meditation.cita = completeVerse.cita
-        meditation.cita2 = completeVerse.cita2
-
-    }
+    meditation.texto = verseObject.scripture;
+    meditation.cita = verseObject.cita;
+    meditation.cita2 = verseObject.cita23
 
     // Obtengo ultima fecha disponible y le sumo uno:
     let futureDate
-    if (!overwriteDate) {
-        futureDate = await lib.getLastScrapedDate();
-    } else {
-        futureDate = new Date(dateParam)
-
-    }
+    (!overwriteDate)
+       ? futureDate = await lib.getLastScrapedDate()
+       : futureDate = new Date(dateParam)
 
     meditation.fecha = futureDate
     let planAnualLectura = await lib.buildPlanLecturesHTML(futureDate);

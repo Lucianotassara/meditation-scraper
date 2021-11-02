@@ -42,6 +42,69 @@ function parseArguments() {
 }
 
 
+
+async function scrapeInfo() {
+    let browser;
+
+    if (process.env.ENV === 'raspi') {
+        browser = await puppeteer.launch(
+            // Uncomment this line to run on ARM like a Raspberry pi.
+            { executablePath: 'chromium-browser' }             
+            
+            // Uncomment this line to see the browser.
+            //{ headless: false, defaultViewport: null }       
+            );
+    }
+    if (process.env.ENV === 'desa') {
+
+        browser = await puppeteer.launch(
+            // Uncomment this line to run on ARM like a Raspberry pi.
+            // {executablePath: 'chromium-browser' }         
+            
+            // Uncomment this line to see the browser.
+            { headless: false, defaultViewport: null }       
+        );
+
+    }
+
+    const page = await browser.newPage();
+    await page.goto(process.env.MS_SCRAPE_URL);
+
+
+    // Cargo el HTML para mostratr por el log, para que quede guardado por si algo falla al hacer scrapping
+    this.body = await page.content();
+    this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
+
+    /****************************************  Titulo*/
+    //// TEXT
+    const title = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('body > main > section > div > div > div > div > h1'),
+            e => e.textContent));
+
+
+    /****************************************  Reflexión HTML*/
+    //// HTML ARRAY
+    const paragraph = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('#js--font-sizing > article > p'),
+            e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
+
+    /****************************************  Verse*/
+
+    let allVerseReferences = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('#js--font-sizing > article > p > a'),
+            e => e.textContent));
+
+    await browser.close();   //Cierro chromium
+
+    console.log(title,paragraph,allVerseReferences)
+
+    return {
+        title,
+        paragraph,
+        allVerseReferences
+    }
+}
+
 async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
     /**
      * 
@@ -52,7 +115,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
      *  */
     let completeVerse = { cita: '', cita2: '', scripture: ''}
     let hayversiculo
-    // TODO: CHECK WHENEVER THIS SITUATION COMES...
+
     (paragraph[0] == '<p><em>Para sacarle el máximo provecho a este devocional, lea los pasajes a los que se hacen referencia.</em></p>')
         ? hayversiculo = false
         : hayversiculo = true;
@@ -70,7 +133,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
 
     if (hayversiculo && !esCapituloCompleto) {
         //// PRIMARY VERSE REFERENCE (String)
-        completeVerse.cita = allVerseReferences[0];                              // 'Juan 8.25-36'       //1 Corintios 7            //"Génesis 1.26, 27"
+        completeVerse.cita = allVerseReferences[0];                          // 'Juan 8.25-36'        //1 Corintios 7            //"Génesis 1.26, 27"
         citaDetailA = allVerseReferences[0].replace(', ', '-');                                                                  //"Génesis 1.26-27"
         citaDetail = citaDetailA.split(' ');                                 // ['Juan','8.25-26']   //['1', 'Corintios', '7']  //['Génesis', '1.26,', '27']
 
@@ -91,7 +154,7 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
 
     } else {
         //// ALTERNATIVE VERSES ARRAY
-        allVerseReferences.shift(); // Remove first element
+        // allVerseReferences.shift(); // Remove first element
         console.log('Muestro citas posibles: ' + allVerseReferences);
 
         let citasValidas = []
@@ -150,60 +213,6 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
     return completeVerse;
 }
 
-async function scrapeInfo() {
-    let browser;
-
-    if (process.env.ENV === 'raspi') {
-        browser = await puppeteer.launch(
-            { executablePath: 'chromium-browser' }             // Uncomment this line to run on ARM like a Raspberry pi.
-            //{ headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
-        );
-    }
-    if (process.env.ENV === 'desa') {
-
-        browser = await puppeteer.launch(
-            // {executablePath: 'chromium-browser' }         // Uncomment this line to run on ARM like a Raspberry pi.
-            { headless: false, defaultViewport: null }       // Uncomment this line to see the browser.
-        );
-
-    }
-
-    const page = await browser.newPage();
-    await page.goto(process.env.MS_SCRAPE_URL);
-
-
-    // Cargo el HTML para mostratr por el log, para que quede guardado por si algo falla al hacer scrapping
-    this.body = await page.content();
-    this.body = this.body.replace(/(\r\n|\n|\r)/gm, "");
-
-    /****************************************  Titulo*/
-    //// TEXT
-    const title = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('body > main > section > div > div > div > div > h1'),
-            e => e.textContent));
-
-
-    /****************************************  Reflexión HTML*/
-    //// HTML ARRAY
-    const paragraph = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('#js--font-sizing > article > p'),
-            e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
-
-    /****************************************  Verse*/
-
-    let allVerseReferences = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('#js--font-sizing > article > p > a'),
-            e => e.textContent));
-
-    await browser.close();   //Cierro chromium
-
-    return {
-        title,
-        paragraph,
-        allVerseReferences
-    }
-}
-
 
 async function getMeditation() {
     
@@ -234,7 +243,7 @@ async function getMeditation() {
 
     meditation.texto = verseObject.scripture;
     meditation.cita = verseObject.cita;
-    meditation.cita2 = verseObject.cita23
+    meditation.cita2 = verseObject.cita2;
 
     // Obtengo ultima fecha disponible y le sumo uno:
     let futureDate

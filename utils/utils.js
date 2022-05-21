@@ -20,17 +20,21 @@ async function getRvcVerseAPI(key) {
     }
 }
 
-async function getLastScrapedDate() {
+async function getLastScrapedOne() {
     try {
         const response = await fetch(evidaApiUrl + '/lastDateScraped');
         const json = await response.json();
         console.log(`Haciendo fetch a evida-api para obtener ultima fecha disponible: ${evidaApiUrl}`)
         console.log(`evida-api responde con fecha: ${JSON.stringify(json.fecha)}`);
-
+        let lastTitle = json.titulo;
         const futureDate = new Date(json.fecha);
         futureDate.setDate(futureDate.getDate() + 2);
         futureDate.setHours(-3, 0, 0, 0);
-        return futureDate;
+        
+        return {
+            futureDate: futureDate, 
+            lastTitle: lastTitle
+        }
 
     } catch (error) {
         console.error(error);
@@ -363,7 +367,7 @@ module.exports = {
     jwtLogin,
     apiPostMeditation,
     getRvcVerseAPI,
-    getLastScrapedDate,
+    getLastScrapedOne,
     raiseError,
     getPlanLectures,
     buildPlanLecturesHTML

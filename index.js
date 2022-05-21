@@ -219,42 +219,58 @@ async function getMeditation() {
         title
     } = await scrapeInfo();
 
-    let meditation = {
-        titulo: '',
-        cita: '',
-        cita2: '',
-        texto: '',
-        reflexion: ''
+    const {
+        futureDate,
+        lastTitle
+    } = await lib.getLastScrapedOne()
+    
+    
+    if( title != lastTitle) {
+        let meditation = {
+            titulo: '',
+            cita: '',
+            cita2: '',
+            texto: '',
+            reflexion: ''
+        }
+    
+        meditation.titulo = title[0];
+    
+        paragraph.shift();  // Elimino el primer item
+        paragraph.pop();    // Elimino el ultimo item
+        meditation.reflexion = paragraph.join(' ');
+    
+        let verseObject;
+        (overwriteVerse)
+            ? verseObject = await lib.getRvcVerseAPI(versParam)
+            : verseObject = await handleVerse(paragraph, allVerseReferences, overwriteVerse);
+    
+        meditation.texto = verseObject.scripture;
+        meditation.cita = verseObject.cita;
+        meditation.cita2 = verseObject.cita2;
+    
+        // Obtengo ultima fecha disponible y le sumo uno:
+        // let futureDate
+        (!overwriteDate)
+           ? meditationDate = futureDate
+           : meditationDate = new Date(dateParam)
+    
+        meditation.fecha = meditationDate
+        let planAnualLectura = await lib.buildPlanLecturesHTML(meditationDate);
+        meditation.reflexion += planAnualLectura;
+    
+        //objeto final
+        console.log(meditation);
+        return meditation;
+    } else {
+        
+        let meditation = {
+            error: 'Trying to insert duplicated stuff...'
+        }
+        
+        return meditation
     }
 
-    meditation.titulo = title[0];
-
-    paragraph.shift();  // Elimino el primer item
-    paragraph.pop();    // Elimino el ultimo item
-    meditation.reflexion = paragraph.join(' ');
-
-    let verseObject;
-    (overwriteVerse)
-        ? verseObject = await lib.getRvcVerseAPI(versParam)
-        : verseObject = await handleVerse(paragraph, allVerseReferences, overwriteVerse);
-
-    meditation.texto = verseObject.scripture;
-    meditation.cita = verseObject.cita;
-    meditation.cita2 = verseObject.cita2;
-
-    // Obtengo ultima fecha disponible y le sumo uno:
-    let futureDate
-    (!overwriteDate)
-       ? futureDate = await lib.getLastScrapedDate()
-       : futureDate = new Date(dateParam)
-
-    meditation.fecha = futureDate
-    let planAnualLectura = await lib.buildPlanLecturesHTML(futureDate);
-    meditation.reflexion += planAnualLectura;
-
-    //objeto final
-    console.log(meditation);
-    return meditation;
 }
 
 async function run() {
@@ -272,7 +288,8 @@ async function run() {
             && meditation.cita
             && meditation.fecha
             && meditation.texto
-            && meditation.reflexion) {
+            && meditation.reflexion
+            && !meditation.error) {
 
             /***** JWT Login */
             let token;
@@ -305,7 +322,7 @@ async function run() {
                 utils.raiseError(3, meditation, this.body, errorMessage);
             }
         } else {
-            errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}`;
+            errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}. - ${meditation.error}`;
             console.error(errorMessage)
             utils.raiseError(4, meditation, this.body, errorMessage);
 

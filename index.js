@@ -284,49 +284,57 @@ async function run() {
     try {
         meditation = await getMeditation();
 
-        if (meditation.titulo
-            && meditation.cita
-            && meditation.fecha
-            && meditation.texto
-            && meditation.reflexion
-            && !meditation.error) {
+        if(!meditation.error){
 
-            /***** JWT Login */
-            let token;
-            let errorMessage;
-            try {
-                token = await lib.jwtLogin();
-            } catch (e) {
-                console.error(e)
-                utils.raiseError(1, meditation, this.body, e);
-            }
-
-            if (token) {
-                /***** POST Meditation to API */
+            if (meditation.titulo
+                && meditation.cita
+                && meditation.fecha
+                && meditation.texto
+                && meditation.reflexion) {
+    
+                /***** JWT Login */
+                let token;
+                let errorMessage;
                 try {
-                    if (process.env.ENV === 'raspi') {
-                        result = await lib.apiPostMeditation(token, meditation);
-                    }
-                    if (process.env.ENV === 'desa') {
-                        console.log("DESA -----> No hago post a la API porque estoy en desa")
-                        // result = await lib.apiPostMeditation(token, meditation); 
-                    }
-                    pusher.sendPushNotification(meditation, error = false);
+                    token = await lib.jwtLogin();
                 } catch (e) {
                     console.error(e)
-                    utils.raiseError(2, meditation, this.body, e);
+                    utils.raiseError(1, meditation, this.body, e);
+                }
+    
+                if (token) {
+                    /***** POST Meditation to API */
+                    try {
+                        if (process.env.ENV === 'raspi') {
+                            result = await lib.apiPostMeditation(token, meditation);
+                        }
+                        if (process.env.ENV === 'desa') {
+                            console.log("DESA -----> No hago post a la API porque estoy en desa")
+                            // result = await lib.apiPostMeditation(token, meditation); 
+                        }
+                        pusher.sendPushNotification(meditation, error = false);
+                    } catch (e) {
+                        console.error(e)
+                        utils.raiseError(2, meditation, this.body, e);
+                    }
+                } else {
+                    errorMessage = `Ocurrió un error al obtener el token! ${new Date()}`;
+                    console.error(errorMessage)
+                    utils.raiseError(3, meditation, this.body, errorMessage);
                 }
             } else {
-                errorMessage = `Ocurrió un error al obtener el token! ${new Date()}`;
+                errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}. - ${meditation.error}`;
                 console.error(errorMessage)
-                utils.raiseError(3, meditation, this.body, errorMessage);
+                utils.raiseError(4, meditation, this.body, errorMessage);
+    
             }
         } else {
-            errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}. - ${meditation.error}`;
+            errorMessage = `${meditation.error}`;
             console.error(errorMessage)
             utils.raiseError(4, meditation, this.body, errorMessage);
 
         }
+
 
     } catch (e) {
         console.error(e)

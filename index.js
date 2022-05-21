@@ -41,8 +41,6 @@ function parseArguments() {
     console.log(argv);
 }
 
-
-
 async function scrapeInfo() {
     let browser;
 
@@ -213,7 +211,6 @@ async function handleVerse(paragraph, allVerseReferences, overwriteVerse) {
     return completeVerse;
 }
 
-
 async function getMeditation() {
     
     const {
@@ -259,9 +256,6 @@ async function getMeditation() {
     console.log(meditation);
     return meditation;
 }
-
-
-/************** MAIN ********************************/
 
 async function run() {
     /***** Scrape meditation */
@@ -322,7 +316,6 @@ async function run() {
         utils.raiseError(5, meditation, this.body, e);
 
     }
-
 
 }
 

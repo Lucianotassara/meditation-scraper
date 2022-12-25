@@ -5,6 +5,7 @@ const lib = require('./utils/utils.js');
 const pusher = require('./utils/pushNotifier.js');
 const yargs = require("yargs");
 
+
 let versParam;
 let overwriteVerse;
 let dateParam;
@@ -50,7 +51,7 @@ async function scrapeInfo() {
             { executablePath: 'chromium-browser' }             
             
             // Uncomment this line to see the browser.
-            //{ headless: false, defaultViewport: null }       
+            ,{ headless: true, defaultViewport: null }       
             );
     }
     if (process.env.ENV === 'desa') {
@@ -83,7 +84,7 @@ async function scrapeInfo() {
     /****************************************  Reflexión HTML*/
     //// HTML ARRAY
     const paragraph = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('#js--font-sizing > article > p'),
+        Array.from(document.querySelectorAll('[@id="js--widget-content"]/div/div/div/div[1]/article/p'),
             e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
 
     /****************************************  Verse*/
@@ -296,7 +297,7 @@ async function run() {
                 let token;
                 let errorMessage;
                 try {
-                    token = await lib.jwtLogin();
+                    
                 } catch (e) {
                     console.error(e)
                     utils.raiseError(1, meditation, this.body, e);
@@ -325,7 +326,7 @@ async function run() {
             } else {
                 errorMessage = `Falta un dato obligatorio en la meditación! ${new Date()}. - ${meditation.error}`;
                 console.error(errorMessage)
-                utils.raiseError(4, meditation, this.body, errorMessage);
+                
     
             }
         } else {

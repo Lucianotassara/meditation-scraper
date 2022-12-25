@@ -98,8 +98,8 @@ async function getPlanLectures(dayNumber) {
     try {
         const response = await fetch(`${evidaApiUrl}/plan/1/${dayNumber}`);
         const json = await response.json();
-        // console.log(`Haciendo fetch a evida-api para obtener las lecturas diarias del plan: ${evidaApiUrl}`)
-        // console.log(`evida-api responde estas lectuas: ${JSON.stringify( json )}`);
+        console.log(`Haciendo fetch a evida-api para obtener las lecturas diarias del plan: ${evidaApiUrl}`)
+        console.log(`evida-api responde estas lectuas: ${JSON.stringify( json )}`);
         return json;
 
     } catch (error) {

@@ -65,6 +65,15 @@ async function scrapeInfo() {
         );
 
     }
+    if (process.env.ENV === 'prod') {
+        browser = await puppeteer.launch(
+            // Uncomment this line to run on ARM like a Raspberry pi.
+            { executablePath: 'chromium-browser' }             
+            
+            // Uncomment this line to see the browser.
+            ,{ headless: true, defaultViewport: null }       
+            );
+    }
 
     const page = await browser.newPage();
     await page.goto(process.env.MS_SCRAPE_URL);

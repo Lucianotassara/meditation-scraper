@@ -71,7 +71,8 @@ async function scrapeInfo() {
             { executablePath: 'chromium-browser' },
             
             // Uncomment this line to see the browser.
-            { headless: true, defaultViewport: null }       
+            { headless: true, defaultViewport: null, args: ["--no-sandbox", "--disable-setuid-sandbox"] } 
+                  
             );
     }
 

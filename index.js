@@ -93,13 +93,13 @@ async function scrapeInfo() {
     /****************************************  Reflexión HTML*/
     //// HTML ARRAY
     const paragraph = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('[@id="js--widget-content"]/div/div/div/div[1]/article/p'),
+        Array.from(document.querySelectorAll('#js--widget-content > div > div > div > div.js--font-sizing > article > P'),
             e => e.outerHTML)); // me quedo con el html y sus tags de parrafo (outerHTML)
 
     /****************************************  Verse*/
 
     let allVerseReferences = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('#js--font-sizing > article > p > a'),
+        Array.from(document.querySelectorAll('#js--widget-content > div > div > div > div.js--font-sizing > article > p > a'), 
             e => e.textContent));
 
     await browser.close();   //Cierro chromium
@@ -306,7 +306,7 @@ async function run() {
                 let token;
                 let errorMessage;
                 try {
-                    
+                    token = await lib.jwtLogin();
                 } catch (e) {
                     console.error(e)
                     utils.raiseError(1, meditation, this.body, e);

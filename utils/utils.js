@@ -94,9 +94,9 @@ async function apiPostMeditation(token, meditation) {
 }
 
 
-async function getPlanLectures(dayNumber) {
+async function getPlanLecturas(dayNumber, planId) {
     try {
-        const response = await fetch(`${evidaApiUrl}/plan/1/${dayNumber}`);
+        const response = await fetch(`${evidaApiUrl}/plan/${planId}/${dayNumber}`);
         const json = await response.json();
         console.log(`Haciendo fetch a evida-api para obtener las lecturas diarias del plan: ${evidaApiUrl}`)
         console.log(`evida-api responde estas lectuas: ${JSON.stringify( json )}`);
@@ -113,7 +113,7 @@ async function buildPlanLecturesHTML(futureDate) {
 
     let momentDay;
     console.log('************************************************************************************');
-    momentDay = moment(now).add(1, 'days').dayOfYear(); // Number
+    momentDay = moment(now).add(1, 'days').dayOfYear();
 
     console.log(`Day of year for next meditation using moment.js: ${momentDay}`);
     console.log('************************************************************************************');
@@ -121,7 +121,8 @@ async function buildPlanLecturesHTML(futureDate) {
 
     //search for the date of the year within the const of bible plan
     //Foreach searching within the const for the verse of the calculated date
-    let data = await getPlanLectures(momentDay);
+    // let data = await getPlanLecturas(momentDay, 1); // Biblia en un año (Plan 1)
+    let data = await getPlanLecturas(momentDay, 2); // Biblia en un año (Plan 1)
 
     let verseList = '';
     for (let value of data) {
@@ -129,9 +130,15 @@ async function buildPlanLecturesHTML(futureDate) {
         verseList += `<li><a href="${value.url}">${value.displayVerse}</a></li>`;
         // dayOfYear = value.dayNumber;
     }
+    let htmlBiblePlan = `<div><br><h3>Nuevo testamento en un año:</h3><span><i>Día ${momentDay} </i></span><ul>${verseList}</ul></div>`;
+    
+    if (typeof data[0].podcastLink === "string" && data[0].podcastLink != '') 
+        htmlBiblePlan += `<br><div class='podcast'><h4>Podcast de hoy: <a href='${data[0].podcastLink}'>Escuchar</a></h4></div>`
+    
+    if (typeof data[0].videoLink === "string" && data[0].videoLink != '') 
+        htmlBiblePlan += `<br><div class='video'><h4>Video de hoy: <a href='${data[0].videoLink}'>Mirar</a></h4></div>`
 
     //create HTML string to concatenate to the meditation.
-    let htmlBiblePlan = `<div><br><h3>Biblia en un año:</h3><span><i>Día ${momentDay} </i></span><ul>${verseList}</ul></div>`;
     console.log(htmlBiblePlan);
 
     return htmlBiblePlan;
@@ -369,7 +376,7 @@ module.exports = {
     getRvcVerseAPI,
     getLastScrapedOne,
     raiseError,
-    getPlanLectures,
+    getPlanLecturas,
     buildPlanLecturesHTML
 }
 

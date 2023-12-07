@@ -61,7 +61,7 @@ async function scrapeInfo() {
             // {executablePath: 'chromium-browser' }         
             
             // Uncomment this line to see the browser.
-            { headless: false, defaultViewport: null }       
+            { headless: true, defaultViewport: null }       
         );
 
     }
@@ -234,6 +234,10 @@ async function getMeditation() {
         futureDate,
         lastTitle
     } = await lib.getLastScrapedOne()
+
+    
+    //    let  futureDate = new Date('2023-05-16')
+    //    let  lastTitle = ""
     
     
     if( title != lastTitle) {
@@ -243,6 +247,7 @@ async function getMeditation() {
             cita2: '',
             texto: '',
             reflexion: ''
+            ,estado: 'borrador'
         }
     
         meditation.titulo = title[0];
@@ -320,8 +325,8 @@ async function run() {
                             result = await lib.apiPostMeditation(token, meditation);
                         }
                         if (process.env.ENV === 'desa') {
-                            console.log("DESA -----> No hago post a la API porque estoy en desa")
-                            // result = await lib.apiPostMeditation(token, meditation); 
+                            console.log("DESA -----> Si hago post porque raspi no anda")
+                            result = await lib.apiPostMeditation(token, meditation); // Uncommented since raspi is not working
                         }
                         pusher.sendPushNotification(meditation, error = false);
                     } catch (e) {

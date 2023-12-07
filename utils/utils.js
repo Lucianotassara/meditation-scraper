@@ -122,12 +122,12 @@ async function buildPlanLecturesHTML(futureDate) {
     //search for the date of the year within the const of bible plan
     //Foreach searching within the const for the verse of the calculated date
     // let data = await getPlanLecturas(momentDay, 1); // Biblia en un año (Plan 1)
-    let data = await getPlanLecturas(momentDay, 2); // Biblia en un año (Plan 1)
+    let data = await getPlanLecturas(momentDay, 2); // Biblia en un año (Plan 1) NT en un año (Plan 2)
 
     let verseList = '';
     for (let value of data) {
         console.log(value);
-        verseList += `<li><a href="${value.url}">${value.displayVerse}</a></li>`;
+        verseList += `<li><a href='${value.url}'>${value.displayVerse}</a></li>`;
         // dayOfYear = value.dayNumber;
     }
     let htmlBiblePlan = `<div><br><h3>Nuevo testamento en un año:</h3><span><i>Día ${momentDay} </i></span><ul>${verseList}</ul></div>`;
